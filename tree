@@ -1,0 +1,52 @@
+GestureSlide/
+│
+├── app.py
+├── requirements.txt
+├── config.py
+├── README.md
+│
+├── backend/
+│   ├── camera/
+│   │   ├── webcam.py
+│   │   └── stream.py
+│   │
+│   ├── gestures/
+│   │   ├── hand_tracker.py
+│   │   ├── gesture_classifier.py
+│   │   ├── swipe_detector.py
+│   │   └── smoothing.py
+│   │
+│   ├── controller/
+│   │   ├── slide_controller.py
+│   │   ├── annotation_controller.py
+│   │   └── pointer_controller.py
+│   │
+│   ├── database/
+│   │   ├── db.py
+│   │   └── models.py
+│   │
+│   ├── routes/
+│   │   ├── api.py
+│   │   └── dashboard.py
+│   │
+│   └── utils/
+│       ├── logger.py
+│       └── helpers.py
+│
+├── frontend/
+│   ├── templates/
+│   │   └── index.html
+│   │
+│   ├── static/
+│   │   ├── css/
+│   │   │   └── style.css
+│   │   │
+│   │   ├── js/
+│   │   │   └── dashboard.js
+│   │   │
+│   │   └── images/
+│
+├── data/
+│   └── gestures.db
+│
+└── presentations/
