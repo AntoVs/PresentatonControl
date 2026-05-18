@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>GestureSlide Dashboard</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+
+            background: #0f172a;
+
+            color: white;
+
+            font-family: Arial, sans-serif;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            height: 100vh;
+        }
+
+        .dashboard {
+
+            width: 500px;
+
+            background: #111827;
+
+            border-radius: 20px;
+
+            padding: 30px;
+
+            box-shadow:
+                0 0 30px rgba(0,0,0,0.5);
+        }
+
+        h1 {
+
+            text-align: center;
+
+            margin-bottom: 30px;
+
+            color: #22d3ee;
+        }
+
+        .card {
+
+            background: #1f2937;
+
+            padding: 20px;
+
+            border-radius: 15px;
+
+            margin-bottom: 20px;
+        }
+
+        .label {
+
+            color: #9ca3af;
+
+            font-size: 14px;
+
+            margin-bottom: 10px;
+        }
+
+        .value {
+
+            font-size: 28px;
+
+            font-weight: bold;
+        }
+
+        .active {
+            color: #22c55e;
+        }
+
+        .locked {
+            color: #ef4444;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="dashboard">
+	    <div class="card">
+
+		<div class="label">
+			LIVE CAMERA
+		</div>
+		<img
+		        src="/video_feed"
+		        width="100%"
+		        style="
+				border-radius: 15px;
+			        margin-top: 10px;
+			"
+		>
+
+		</div>
+
+        <h1>GestureSlide</h1>
+
+        <div class="card">
+
+            <div class="label">
+                CURRENT GESTURE
+            </div>
+
+            <div class="value"
+                 id="gesture">
+
+                NONE
+
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <div class="label">
+                CURRENT ACTION
+            </div>
+
+            <div class="value"
+                 id="action">
+
+                IDLE
+
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <div class="label">
+                SYSTEM STATUS
+            </div>
+
+            <div class="value active"
+                 id="status">
+
+                ACTIVE
+
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <div class="label">
+                FPS
+            </div>
+
+            <div class="value"
+                 id="fps">
+
+                0
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
