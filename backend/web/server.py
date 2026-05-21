@@ -27,9 +27,6 @@ class GestureSlideServer:
 
         self.setup_routes()
 
-    # ===================================
-    # ROUTES
-    # ===================================
 
     def setup_routes(self):
 
@@ -40,9 +37,6 @@ class GestureSlideServer:
                 "index.html"
             )
 
-    # ===================================
-    # STREAM FRAME
-    # ===================================
 
     def stream_frame(self):
 
@@ -82,9 +76,6 @@ class GestureSlideServer:
             }
         )
 
-    # ===================================
-    # RUN SERVER
-    # ===================================
 
     def run(self):
 

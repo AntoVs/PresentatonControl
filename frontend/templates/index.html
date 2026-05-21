@@ -6,9 +6,6 @@
     <title>GestureSlide Dashboard</title>
     
     <style>
-        /* ==========================================================================
-           1. RESET & GRUVBOX VARIABLES
-           ========================================================================== */
         :root {
             --bg-hard: #1d2021;
             --bg-normal: #282828;
@@ -41,7 +38,6 @@
             position: relative;
         }
 
-        /* Particles container setup */
         #particles-js {
             position: absolute;
             width: 100%;
@@ -51,9 +47,6 @@
             z-index: 1;
         }
 
-        /* ==========================================================================
-           2. DASHBOARD LAYOUT
-           ========================================================================== */
         .dashboard {
             position: relative;
             z-index: 2;
@@ -78,7 +71,6 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
-        /* Two-column layout grid */
         .dashboard-grid {
             display: grid;
             grid-template-columns: 1.2fr 1fr;
@@ -91,9 +83,7 @@
             }
         }
 
-        /* ==========================================================================
-           3. CARDS & COMPONENTS
-           ========================================================================== */
+
         .card {
             background: var(--bg-element);
             padding: 20px;
@@ -140,7 +130,6 @@
             display: block;
         }
 
-        /* Dynamic Status Colors */
         .active { color: var(--green); }
         .locked { color: var(--red); }
     </style>
@@ -205,10 +194,7 @@
             "retina_detect": true
         });
 
-        /* --- Socket.io Realtime Stream Handling --- */
         const socket = io();
-
-        // Cache DOM nodes once to eliminate repetitive lookups inside the high-frequency socket loop
         const videoEl = document.getElementById("video");
         const gestureEl = document.getElementById("gesture");
         const actionEl = document.getElementById("action");
@@ -219,16 +205,13 @@
         });
 
         socket.on("video_frame", (data) => {
-            // Update camera frame stream
             if (data.frame) {
                 videoEl.src = "data:image/jpeg;base64," + data.frame;
             }
 
-            // Update UI textual telemetry
             gestureEl.innerText = data.gesture || "NONE";
             actionEl.innerText = data.action || "IDLE";
 
-            // Process lock/unlock system states
             if (data.locked) {
                 statusEl.innerText = "LOCKED";
                 statusEl.className = "value locked";

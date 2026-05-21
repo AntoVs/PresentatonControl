@@ -8,86 +8,43 @@ os.environ["GLOG_minloglevel"] = "3"
 import cv2
 
 from backend.state.system_state import SystemState
-
 from backend.gestures.hand_tracker import HandTracker
 from backend.gestures.gesture_classifier import GestureClassifier
-
 from backend.controller.slide_controller import get_controller
 from backend.controller.pointer_controller import PointerController
-
 from backend.utils.cooldown_manager import CooldownManager
-
 from backend.web.server import \
     GestureSlideServer
 
 
 class GestureSlideApp:
-
     def __init__(self):
 
-        # ===================================
-        # CAMERA
-        # ===================================
-
         self.cap = cv2.VideoCapture(0)
-
-        # ===================================
-        # CORE MODULES
-        # ===================================
-
         self.tracker = HandTracker()
-
         self.classifier = GestureClassifier()
-
         self.slide_controller = get_controller()
-
         self.pointer_controller = PointerController()
-
         self.cooldown = CooldownManager(1.5)
-
         self.state = SystemState()
-
-        # ===================================
-        # SHARED FRAME
-        # ===================================
-
         self.current_frame = None
 
-        # ===================================
         # WEB SERVER
-        # ===================================
-
         self.server = GestureSlideServer(
             self
         )
 
-        # ===================================
         # POINTER SETTINGS
-        # ===================================
-
         self.prev_hand_x = 0
         self.prev_hand_y = 0
-
         self.pointer_speed = 2.5
-
         self.movement_threshold = 8
-
-        # ===================================
-        # FPS
-        # ===================================
-
         self.prev_time = 0
 
-    # ===================================
     # MAIN LOOP
-    # ===================================
-
     def run(self):
 
-        # ===================================
         # START WEB SERVER
-        # ===================================
-
         def start_server():
 
             try:
@@ -120,9 +77,7 @@ class GestureSlideApp:
                 if not success:
                     break
 
-                # ===================================
                 # MIRROR WEBCAM
-                # ===================================
 
                 frame = cv2.flip(
                     frame,
@@ -154,31 +109,16 @@ class GestureSlideApp:
                     landmarks
                 )
 
-                # ===================================
-                # FPS
-                # ===================================
-
                 fps = self.calculate_fps()
-
-                # ===================================
-                # UI
-                # ===================================
 
                 self.render_ui(
                     frame,
                     fps
                 )
 
-                # ===================================
-                # STORE FRAME
-                # ===================================
 
                 self.current_frame = \
                     frame.copy()
-
-                # ===================================
-                # STREAM FRAME
-                # ===================================
 
                 self.server.stream_frame()
 
@@ -312,10 +252,6 @@ class GestureSlideApp:
         self.prev_hand_x = x
         self.prev_hand_y = y
 
-        # ===================================
-        # IGNORE SMALL MOVEMENTS
-        # ===================================
-
         if abs(movement_x) > \
            self.movement_threshold or \
            abs(movement_y) > \
@@ -336,9 +272,7 @@ class GestureSlideApp:
                 dy
             )
 
-    # ===================================
     # NEXT SLIDE
-    # ===================================
 
     def next_slide(self):
 
@@ -351,9 +285,7 @@ class GestureSlideApp:
 
         self.slide_controller.next_slide()
 
-    # ===================================
     # PREVIOUS SLIDE
-    # ===================================
 
     def previous_slide(self):
 
@@ -365,10 +297,6 @@ class GestureSlideApp:
         )
 
         self.slide_controller.previous_slide()
-
-    # ===================================
-    # FPS
-    # ===================================
 
     def calculate_fps(self):
 
@@ -384,10 +312,6 @@ class GestureSlideApp:
         self.prev_time = current_time
 
         return fps
-
-    # ===================================
-    # UI COLORS
-    # ===================================
 
     def get_ui_color(self):
 
@@ -412,10 +336,6 @@ class GestureSlideApp:
 
         return (255, 255, 255)
 
-    # ===================================
-    # UI RENDERING
-    # ===================================
-
     def render_ui(
         self,
         frame,
@@ -432,10 +352,6 @@ class GestureSlideApp:
             2
         )
 
-        # ===================================
-        # TITLE
-        # ===================================
-
         self.draw_text(
             frame,
             "GestureSlide",
@@ -443,10 +359,6 @@ class GestureSlideApp:
             (0, 255, 255),
             0.9
         )
-
-        # ===================================
-        # GESTURE
-        # ===================================
 
         self.draw_text(
             frame,
@@ -457,10 +369,6 @@ class GestureSlideApp:
             0.9
         )
 
-        # ===================================
-        # ACTION
-        # ===================================
-
         self.draw_text(
             frame,
             f"ACTION  : "
@@ -469,10 +377,6 @@ class GestureSlideApp:
             color,
             0.9
         )
-
-        # ===================================
-        # STATUS
-        # ===================================
 
         status = \
             "LOCKED" \
@@ -487,10 +391,6 @@ class GestureSlideApp:
             0.8
         )
 
-        # ===================================
-        # FPS
-        # ===================================
-
         self.draw_text(
             frame,
             f"FPS : {fps}",
@@ -498,10 +398,6 @@ class GestureSlideApp:
             (0, 255, 0),
             0.8
         )
-
-    # ===================================
-    # DRAW TEXT
-    # ===================================
 
     def draw_text(
         self,
@@ -522,20 +418,12 @@ class GestureSlideApp:
             2
         )
 
-    # ===================================
-    # CLEANUP
-    # ===================================
 
     def cleanup(self):
 
         self.cap.release()
 
         cv2.destroyAllWindows()
-
-
-# ===================================
-# ENTRY POINT
-# ===================================
 
 if __name__ == "__main__":
 
