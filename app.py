@@ -88,8 +88,22 @@ class GestureSlideApp:
         # START WEB SERVER
         # ===================================
 
+        def start_server():
+
+            try:
+
+                self.server.run()
+
+            except Exception as e:
+
+                print(
+                    "[SERVER ERROR]"
+                )
+
+                print(e)
+
         server_thread = threading.Thread(
-            target=self.server.run
+            target=start_server
         )
 
         server_thread.daemon = True
@@ -100,7 +114,8 @@ class GestureSlideApp:
 
             while True:
 
-                success, frame = self.cap.read()
+                success, frame = \
+                    self.cap.read()
 
                 if not success:
                     break
@@ -109,14 +124,19 @@ class GestureSlideApp:
                 # MIRROR WEBCAM
                 # ===================================
 
-                frame = cv2.flip(frame, 1)
+                frame = cv2.flip(
+                    frame,
+                    1
+                )
 
                 # ===================================
                 # HAND TRACKING
                 # ===================================
 
                 frame, landmarks = \
-                    self.tracker.process_frame(frame)
+                    self.tracker.process_frame(
+                        frame
+                    )
 
                 # ===================================
                 # GESTURE DETECTION
@@ -150,25 +170,17 @@ class GestureSlideApp:
                 )
 
                 # ===================================
-                # STORE FRAME FOR WEB STREAM
+                # STORE FRAME
                 # ===================================
 
                 self.current_frame = \
                     frame.copy()
 
                 # ===================================
-                # SHOW WINDOW
+                # STREAM FRAME
                 # ===================================
 
-                cv2.imshow(
-                    "GestureSlide",
-                    frame
-                )
-
-                key = cv2.waitKey(1)
-
-                if key == ord("q"):
-                    break
+                self.server.stream_frame()
 
         except KeyboardInterrupt:
 

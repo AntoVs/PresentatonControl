@@ -1,10 +1,12 @@
 from flask import Flask
 from flask import render_template
-from flask import Response
-from flask import jsonify
+
+from flask_socketio import \
+    SocketIO
 
 import cv2
-import time
+import base64
+
 
 class GestureSlideServer:
 
@@ -16,6 +18,11 @@ class GestureSlideServer:
             __name__,
             template_folder="../../frontend/templates",
             static_folder="../../frontend/static"
+        )
+
+        self.socketio = SocketIO(
+            self.app,
+            cors_allowed_origins="*"
         )
 
         self.setup_routes()
@@ -33,23 +40,36 @@ class GestureSlideServer:
                 "index.html"
             )
 
-        @self.app.route("/video_feed")
-        def video_feed():
+    # ===================================
+    # STREAM FRAME
+    # ===================================
 
-            return Response(
-                self.generate_frames(),
-                mimetype=(
-                    "multipart/x-mixed-replace;"
-                    " boundary=frame"
-                )
-            )
+    def stream_frame(self):
 
-        @self.app.route("/status")
-        def status():
+        frame = \
+            self.gesture_app.current_frame
 
-            state = self.gesture_app.state
+        if frame is None:
+            return
 
-            return jsonify({
+        _, buffer = cv2.imencode(
+            ".jpg",
+            frame
+        )
+
+        frame_base64 = \
+            base64.b64encode(
+                buffer
+            ).decode("utf-8")
+
+        state = self.gesture_app.state
+
+        self.socketio.emit(
+            "video_frame",
+            {
+
+                "frame":
+                    frame_base64,
 
                 "gesture":
                     state.current_gesture,
@@ -59,40 +79,8 @@ class GestureSlideServer:
 
                 "locked":
                     state.system_locked
-            })
-
-    # ===================================
-    # FRAME STREAM
-    # ===================================
-
-    def generate_frames(self):
-
-        while True:
-
-            frame = \
-                self.gesture_app.current_frame
-
-            if frame is None:
-                time.sleep(0.01)
-                continue
-
-            _, buffer = cv2.imencode(
-                ".jpg",
-                frame
-            )
-
-            frame_bytes = buffer.tobytes()
-
-            yield (
-
-                b"--frame\r\n"
-
-                b"Content-Type: image/jpeg\r\n\r\n"
-
-                + frame_bytes +
-
-                b"\r\n"
-            )
+            }
+        )
 
     # ===================================
     # RUN SERVER
@@ -100,7 +88,12 @@ class GestureSlideServer:
 
     def run(self):
 
-        self.app.run(
+        print(
+            "[SERVER] Flask Started"
+        )
+
+        self.socketio.run(
+            self.app,
             host="0.0.0.0",
             port=5000,
             debug=False,

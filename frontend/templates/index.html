@@ -1,16 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GestureSlide Dashboard</title>
-
+    
     <style>
+        /* ==========================================================================
+           1. RESET & GRUVBOX VARIABLES
+           ========================================================================== */
+        :root {
+            --bg-hard: #1d2021;
+            --bg-normal: #282828;
+            --bg-element: #3c3836;
+            --fg-normal: #ebdbb2;
+            --fg-dim: #a89984;
+            
+            /* Accents */
+            --yellow: #fabd2f;
+            --green: #b8bb26;
+            --red: #fb4934;
+            --aqua: #8ec07c;
+        }
 
         * {
             margin: 0;
@@ -19,167 +30,213 @@
         }
 
         body {
-
-            background: #0f172a;
-
-            color: white;
-
-            font-family: Arial, sans-serif;
-
+            background-color: var(--bg-hard);
+            color: var(--fg-normal);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
             display: flex;
-
             justify-content: center;
-
             align-items: center;
-
-            height: 100vh;
+            position: relative;
         }
 
+        /* Particles container setup */
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        /* ==========================================================================
+           2. DASHBOARD LAYOUT
+           ========================================================================== */
         .dashboard {
-
-            width: 500px;
-
-            background: #111827;
-
-            border-radius: 20px;
-
-            padding: 30px;
-
-            box-shadow:
-                0 0 30px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 900px;
+            margin: 20px;
+            background: rgba(40, 40, 40, 0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--bg-element);
+            border-radius: 16px;
+            padding: 35px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
         }
 
         h1 {
-
             text-align: center;
-
             margin-bottom: 30px;
-
-            color: #22d3ee;
+            color: var(--yellow);
+            font-size: 2.5rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
+        /* Two-column layout grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ==========================================================================
+           3. CARDS & COMPONENTS
+           ========================================================================== */
         .card {
-
-            background: #1f2937;
-
+            background: var(--bg-element);
             padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(235, 219, 178, 0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
 
-            border-radius: 15px;
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
 
-            margin-bottom: 20px;
+        .video-card {
+            grid-row: span 3;
+            justify-content: flex-start;
         }
 
         .label {
-
-            color: #9ca3af;
-
-            font-size: 14px;
-
-            margin-bottom: 10px;
+            color: var(--fg-dim);
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
         }
 
         .value {
-
-            font-size: 28px;
-
-            font-weight: bold;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--aqua);
+            word-break: break-all;
         }
 
-        .active {
-            color: #22c55e;
+        #video {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 2px solid var(--bg-hard);
+            background: #1a1a1a;
+            display: block;
         }
 
-        .locked {
-            color: #ef4444;
-        }
-
+        /* Dynamic Status Colors */
+        .active { color: var(--green); }
+        .locked { color: var(--red); }
     </style>
-
 </head>
-
 <body>
 
+    <div id="particles-js"></div>
+
     <div class="dashboard">
-	    <div class="card">
-
-		<div class="label">
-			LIVE CAMERA
-		</div>
-		<img
-		        src="/video_feed"
-		        width="100%"
-		        style="
-				border-radius: 15px;
-			        margin-top: 10px;
-			"
-		>
-
-		</div>
-
         <h1>GestureSlide</h1>
 
-        <div class="card">
-
-            <div class="label">
-                CURRENT GESTURE
+        <div class="dashboard-grid">
+            
+            <div class="card video-card">
+                <div class="label">Live Camera</div>
+                <img id="video" alt="Waiting for stream...">
             </div>
 
-            <div class="value"
-                 id="gesture">
-
-                NONE
-
+            <div class="card">
+                <div class="label">Current Gesture</div>
+                <div class="value" id="gesture">NONE</div>
             </div>
 
-        </div>
-
-        <div class="card">
-
-            <div class="label">
-                CURRENT ACTION
+            <div class="card">
+                <div class="label">Current Action</div>
+                <div class="value" id="action">IDLE</div>
             </div>
 
-            <div class="value"
-                 id="action">
-
-                IDLE
-
+            <div class="card">
+                <div class="label">System Status</div>
+                <div class="value active" id="status">ACTIVE</div>
             </div>
 
         </div>
-
-        <div class="card">
-
-            <div class="label">
-                SYSTEM STATUS
-            </div>
-
-            <div class="value active"
-                 id="status">
-
-                ACTIVE
-
-            </div>
-
-        </div>
-
-        <div class="card">
-
-            <div class="label">
-                FPS
-            </div>
-
-            <div class="value"
-                 id="fps">
-
-                0
-
-            </div>
-
-        </div>
-
     </div>
 
-</body>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 
+    <script>
+        /* --- Particles.js Configuration (Gruvbox Styled) --- */
+        particlesJS('particles-js', {
+            "particles": {
+                "number": { "value": 60, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#a89984" }, // fg_dim
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.25, "random": false },
+                "size": { "value": 3, "random": true },
+                "line_linked": { 
+                    "enable": true, 
+                    "distance": 150, 
+                    "color": "#a89984", 
+                    "opacity": 0.15, 
+                    "width": 1 
+                },
+                "move": { "enable": true, "speed": 1.5, "direction": "none", "random": false, "straight": false, "out_mode": "out" }
+            },
+            "interactivity": {
+                "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": false } },
+                "modes": { "grab": { "distance": 180, "line_linked": { "opacity": 0.35 } } }
+            },
+            "retina_detect": true
+        });
+
+        /* --- Socket.io Realtime Stream Handling --- */
+        const socket = io();
+
+        // Cache DOM nodes once to eliminate repetitive lookups inside the high-frequency socket loop
+        const videoEl = document.getElementById("video");
+        const gestureEl = document.getElementById("gesture");
+        const actionEl = document.getElementById("action");
+        const statusEl = document.getElementById("status");
+
+        socket.on("connect", () => {
+            console.log("Connected to pipeline server successfully.");
+        });
+
+        socket.on("video_frame", (data) => {
+            // Update camera frame stream
+            if (data.frame) {
+                videoEl.src = "data:image/jpeg;base64," + data.frame;
+            }
+
+            // Update UI textual telemetry
+            gestureEl.innerText = data.gesture || "NONE";
+            actionEl.innerText = data.action || "IDLE";
+
+            // Process lock/unlock system states
+            if (data.locked) {
+                statusEl.innerText = "LOCKED";
+                statusEl.className = "value locked";
+            } else {
+                statusEl.innerText = "ACTIVE";
+                statusEl.className = "value active";
+            }
+        });
+    </script>
+</body>
 </html>
